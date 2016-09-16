@@ -7,6 +7,7 @@ dtotal = 0
 cell_size_x = love.graphics.getWidth() / grid_size_x
 cell_size_y = love.graphics.getHeight() / grid_size_y
 speed_off = 0
+gen_number = 0
 
 function make_grid()
 	g = {}
@@ -88,6 +89,8 @@ function update_grid(g)
 		end
 	end
 	
+	gen_number = gen_number + 1
+	
 	return newgrid
 end
 
@@ -97,17 +100,17 @@ function love.update(dt)
 	if dtotal >= speed  and speed > 0 then
 		grid = update_grid(grid)
 		dtotal = dtotal - speed
-    end
-    
-    if love.mouse.isDown(1) then
+	end
+	
+	if love.mouse.isDown(1) then
 		local x = math.floor(love.mouse.getX()/cell_size_x)+1
 		local y = math.floor(love.mouse.getY()/cell_size_y)+1
 		grid[x][y] = 1
-    end
+	end
 end
 
 function love.draw()
-    for i = 1, grid_size_x, 1 do
+	for i = 1, grid_size_x, 1 do
 		for j = 1, grid_size_y, 1 do
 			if grid[i][j] == 1 then
 				-- Cool color gradient!
@@ -116,7 +119,16 @@ function love.draw()
 				love.graphics.rectangle("fill", (i-1)*cell_size_x, (j-1)*cell_size_y, cell_size_x-1, cell_size_y-1)
 			end
 		end
-    end
+	end
+	
+	love.graphics.setColor(255, 255, 255)
+	love.graphics.print("Generation " .. gen_number, 16, 16)
+	
+	if speed ~= 0 then
+		love.graphics.print("Speed: " .. 1/speed .. " generation/s", 16, 32)
+	else
+		love.graphics.print("Paused", 16, 32)
+	end
 end
 
 function love.keyreleased(key)
